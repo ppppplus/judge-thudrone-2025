@@ -107,7 +107,18 @@ class RosVisualizer(QMainWindow):
             # 更新显示
             self.ui.teamDisplay.setText(self.team_name)
             formatted_answer = self.format_answer(self.correct_answer)
-            self.ui.correctAnswer.setHtml(formatted_answer)
+            self.ui.correctAnswer.setHtml('''
+                <div style="text-align: center;">
+                    <div style="font-size: 80px;">
+                        <span style="color: red;">●</span>
+                        <span style="color: green;">●</span>
+                        <span style="color: blue;">●</span>
+                    </div>
+                    <div style="font-size: 48px; margin-top: -20px;">
+                        R G B
+                    </div>
+                </div>
+            ''')
             
             # 更新最后修改时间
             import os

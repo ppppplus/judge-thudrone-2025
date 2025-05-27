@@ -34,7 +34,7 @@ class Ui_MainWindow(object):
         
         # 创建主布局
         self.mainLayout = QtWidgets.QVBoxLayout(self.centralwidget)
-        self.mainLayout.setSpacing(20)  # 增加组件间距
+        self.mainLayout.setSpacing(10)  # 增加组件间距
         self.mainLayout.setContentsMargins(20, 20, 20, 20)  # 增加边距
         
         # 创建顶部信息卡片
@@ -43,73 +43,53 @@ class Ui_MainWindow(object):
             QWidget {
                 background-color: white;
                 border-radius: 15px;
-                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                border: 1px solid #e0e0e0;
             }
         """)
         self.infoLayout = QtWidgets.QHBoxLayout(self.infoCard)
-        self.infoLayout.setContentsMargins(20, 15, 20, 15)
+        self.infoLayout.setContentsMargins(30, 40, 30, 40)
         
-        # 队伍信息部分
-        self.teamInfo = QtWidgets.QWidget()
-        self.teamLayout = QtWidgets.QVBoxLayout(self.teamInfo)
-        
-        self.teamLabel = QtWidgets.QLabel("队伍名称")
+        # 直接在infoLayout中添加标签
+        self.teamLabel = QtWidgets.QLabel("队伍名称：")
         self.teamLabel.setStyleSheet("""
-            QLabel {
-                color: #7f8c8d;
-                font-size: 16px;
-                font-weight: normal;
-            }
+            color: #7f8c8d;
+            font-size: 72px;
+            font-weight: normal;
         """)
-        self.teamLayout.addWidget(self.teamLabel)
+        self.infoLayout.addWidget(self.teamLabel)
         
-        self.teamDisplay = QtWidgets.QLabel("Team 1")
+        self.teamDisplay = QtWidgets.QLabel("Glgg说得都队")
         self.teamDisplay.setStyleSheet("""
-            QLabel {
-                color: #2c3e50;
-                font-size: 32px;
-                font-weight: bold;
-                font-family: 'Microsoft YaHei UI', 'Segoe UI', 'PingFang SC', sans-serif;
-            }
+            color: #2c3e50;
+            font-size: 72px;
+            font-weight: bold;
         """)
-        self.teamLayout.addWidget(self.teamDisplay)
+        self.infoLayout.addWidget(self.teamDisplay)
         
-        # 分数信息部分
-        self.scoreInfo = QtWidgets.QWidget()
-        self.scoreLayout = QtWidgets.QVBoxLayout(self.scoreInfo)
+        self.infoLayout.addStretch()
         
-        self.scoreLabel = QtWidgets.QLabel("当前得分")
+        self.scoreLabel = QtWidgets.QLabel("当前得分：")
         self.scoreLabel.setStyleSheet("""
-            QLabel {
-                color: #7f8c8d;
-                font-size: 16px;
-                font-weight: normal;
-            }
+            color: #7f8c8d;
+            font-size: 72px;
+            font-weight: normal;
         """)
-        self.scoreLayout.addWidget(self.scoreLabel)
+        self.infoLayout.addWidget(self.scoreLabel)
         
         self.scoreDisplay = QtWidgets.QLabel("0")
         self.scoreDisplay.setStyleSheet("""
-            QLabel {
-                color: #e74c3c;
-                font-size: 48px;
-                font-weight: bold;
-                font-family: 'Microsoft YaHei UI', 'Segoe UI', 'PingFang SC', sans-serif;
-            }
+            color: #e74c3c;
+            font-size: 100px;
+            font-weight: bold;
         """)
-        self.scoreLayout.addWidget(self.scoreDisplay)
+        self.infoLayout.addWidget(self.scoreDisplay)
         
         # 将信息添加到顶部卡片
-        self.infoLayout.addWidget(self.teamInfo)
-        self.infoLayout.addStretch()
-        self.infoLayout.addWidget(self.scoreInfo)
-        
-        # 添加顶部卡片到主布局
         self.mainLayout.addWidget(self.infoCard)
         
         # 创建内容区域
         self.contentArea = QtWidgets.QHBoxLayout()
-        self.contentArea.setSpacing(20)
+        self.contentArea.setSpacing(5)
         
         # 左侧答案区域
         self.answersCard = QtWidgets.QWidget()
@@ -117,52 +97,79 @@ class Ui_MainWindow(object):
             QWidget {
                 background-color: white;
                 border-radius: 15px;
-                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                border: 1px solid #e0e0e0;
             }
             QLabel {
                 color: #2c3e50;
-                font-size: 24px;
+                font-size: 36px;
                 font-weight: bold;
-                padding: 15px 0;
-                font-family: 'Microsoft YaHei UI', 'Segoe UI', 'PingFang SC', sans-serif;
+                padding: 5px 0;
             }
             QTextBrowser {
                 border: 2px solid #e0e0e0;
                 border-radius: 12px;
-                padding: 15px;
-                font-size: 20px;
-                line-height: 1.5;
+                padding: 20px;
+                font-size: 72px;
+                line-height: 1.0;
                 background-color: #f8f9fa;
                 color: #2c3e50;
-                font-family: 'Microsoft YaHei UI', 'Segoe UI', 'PingFang SC', sans-serif;
+                min-height: 120px;
+                max-height: 160px;
             }
         """)
         
         self.answersLayout = QtWidgets.QVBoxLayout(self.answersCard)
-        self.answersLayout.setContentsMargins(20, 20, 20, 20)
+        self.answersLayout.setContentsMargins(20, 10, 20, 10)
+        self.answersLayout.setSpacing(5)
         
         # 正确答案部分
         self.correctLabel = QtWidgets.QLabel("正确答案")
+        self.correctLabel.setFixedWidth(400)  # 固定标签宽度
+        self.correctLabel.setMinimumHeight(40)  # 设置最小高度
+        self.correctLabel.setStyleSheet("""
+            color: #2c3e50;
+            font-size: 56px;
+            font-weight: bold;
+            padding: 5px 10px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            margin: 5px;
+        """)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        self.correctLabel.setSizePolicy(sizePolicy)
         self.answersLayout.addWidget(self.correctLabel)
         
         self.correctAnswer = QtWidgets.QTextBrowser()
-        self.correctAnswer.setMinimumHeight(150)
-        self.correctAnswer.setMaximumHeight(200)
+        self.correctAnswer.setMinimumHeight(160)
+        self.correctAnswer.setMaximumHeight(240)
         self.answersLayout.addWidget(self.correctAnswer)
         
         # 添加分隔线
         self.line = QtWidgets.QFrame()
         self.line.setFrameShape(QtWidgets.QFrame.HLine)
-        self.line.setStyleSheet("background-color: #e0e0e0;")
+        self.line.setStyleSheet("background-color: #e0e0e0; margin: 5px 0;")
         self.answersLayout.addWidget(self.line)
         
         # 选手答案部分
         self.playerLabel = QtWidgets.QLabel("选手答案")
+        self.playerLabel.setFixedWidth(400)  # 固定标签宽度
+        self.playerLabel.setMinimumHeight(40)  # 设置最小高度
+        self.playerLabel.setStyleSheet("""
+            color: #2c3e50;
+            font-size: 56px;
+            font-weight: bold;
+            padding: 5px 10px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            margin: 5px;
+        """)
+        # sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        self.playerLabel.setSizePolicy(sizePolicy)
         self.answersLayout.addWidget(self.playerLabel)
         
         self.playerAnswer = QtWidgets.QTextBrowser()
-        self.playerAnswer.setMinimumHeight(150)
-        self.playerAnswer.setMaximumHeight(200)
+        self.playerAnswer.setMinimumHeight(160)
+        self.playerAnswer.setMaximumHeight(240)
         self.answersLayout.addWidget(self.playerAnswer)
         
         # 右侧视频区域
@@ -171,11 +178,11 @@ class Ui_MainWindow(object):
             QWidget {
                 background-color: white;
                 border-radius: 15px;
-                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                border: 1px solid #e0e0e0;
             }
             QLabel {
                 color: #2c3e50;
-                font-size: 18px;
+                font-size: 56px;
                 font-weight: bold;
                 padding: 10px 0;
             }
@@ -188,7 +195,7 @@ class Ui_MainWindow(object):
         self.videoLayout.addWidget(self.videoLabel)
         
         self.videoDisplay = ROSVideoDisplay()
-        self.videoDisplay.setMinimumSize(640, 480)
+        self.videoDisplay.setMinimumSize(800, 600)
         self.videoDisplay.setStyleSheet("""
             QLabel {
                 border: 2px solid #e0e0e0;
