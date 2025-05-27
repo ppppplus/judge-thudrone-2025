@@ -67,7 +67,7 @@ class Ui_MainWindow(object):
         self.infoLayout.setContentsMargins(30, 20, 30, 20)
         
         # 队伍信息部分
-        self.teamLabel = QtWidgets.QLabel("队伍名称：")
+        self.teamLabel = QtWidgets.QLabel("队伍名称")
         self.teamLabel.setStyleSheet("""
             color: #7f8c8d;
             font-size: 48px;
@@ -84,7 +84,7 @@ class Ui_MainWindow(object):
         self.infoLayout.addWidget(self.teamDisplay)
         
         # 添加计时器部分
-        self.timerLabel = QtWidgets.QLabel("用时：")
+        self.timerLabel = QtWidgets.QLabel("用时")
         self.timerLabel.setStyleSheet("""
             color: #7f8c8d;
             font-size: 48px;
@@ -113,7 +113,7 @@ class Ui_MainWindow(object):
         self.infoLayout.addStretch()
         
         # 分数显示
-        self.scoreLabel = QtWidgets.QLabel("当前得分：")
+        self.scoreLabel = QtWidgets.QLabel("当前得分")
         self.scoreLabel.setStyleSheet("""
             color: #7f8c8d;
             font-size: 48px;
@@ -121,7 +121,7 @@ class Ui_MainWindow(object):
         """)
         self.infoLayout.addWidget(self.scoreLabel)
         
-        self.scoreDisplay = QtWidgets.QLabel("0")
+        self.scoreDisplay = QtWidgets.QLabel("00")
         self.scoreDisplay.setStyleSheet("""
             color: #e74c3c;
             font-size: 72px;
