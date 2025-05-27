@@ -92,7 +92,7 @@ class Ui_MainWindow(object):
         """)
         self.infoLayout.addWidget(self.timerLabel)
         
-        self.timerDisplay = QtWidgets.QLabel("00:00")
+        self.timerDisplay = QtWidgets.QLabel("00:00.000")
         self.timerDisplay.setStyleSheet("""
             color: #2c3e50;
             font-size: 48px;

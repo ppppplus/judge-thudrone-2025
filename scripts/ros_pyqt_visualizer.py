@@ -232,19 +232,6 @@ class RosVisualizer(QMainWindow):
 
     def handle_grid_click(self, event, number):
         """处理网格标签的点击事件"""
-        if event.button() == Qt.LeftButton:  # 左键点击
-            score = 1
-            color = "#90EE90"  # 浅绿色
-        else:  # 右键点击
-            score = 3
-            color = "#228B22"  # 深绿色
-            
-        # 9号位置特殊处理
-        if number == "9":
-            score = 6
-            color = "#FF0000"  # 红色
-            
-        # 更新标签样式
         label = None
         for pos, num in {
             (0, 2): "1", (4, 2): "2", (1, 1): "3",
@@ -255,8 +242,32 @@ class RosVisualizer(QMainWindow):
                 label = self.ui.gridLabels[pos[0]][pos[1]]
                 break
                 
-        if label:
+        if not label:
+            return
+            
+        # 检查当前状态
+        is_active = label.property("active") or False
+        
+        if not is_active:  # 激活状态
+            if event.button() == Qt.LeftButton:  # 左键点击
+                score = 1
+                color = "#90EE90"  # 浅绿色
+            else:  # 右键点击
+                score = 3
+                color = "#228B22"  # 深绿色
+                
+            # 9号位置特殊处理
+            if number == "9":
+                score = 6
+                color = "#FF0000"  # 红色
+                
             label.setStyleSheet(f"background-color: {color}; color: white;")
+            label.setProperty("active", True)
+            label.setProperty("score", score)
+        else:  # 取消激活状态
+            score = -label.property("score")  # 取负值
+            label.setStyleSheet("background-color: #f8f9fa; border: 1px solid #e0e0e0;")
+            label.setProperty("active", False)
             
         # 发布得分消息
         msg = String()
@@ -266,14 +277,21 @@ class RosVisualizer(QMainWindow):
     def handle_circle_click(self, circle_num):
         """处理圈按钮的点击事件"""
         button = self.circle1_button if circle_num == 1 else self.circle2_button
-        if not button.property("clicked"):
+        is_active = button.property("active") or False
+        
+        if not is_active:
             button.setStyleSheet("background-color: #27ae60; color: white;")
-            button.setProperty("clicked", True)
+            button.setProperty("active", True)
+            score = 10
+        else:
+            button.setStyleSheet("")  # 恢复默认样式
+            button.setProperty("active", False)
+            score = -10
             
-            # 发布得分消息
-            msg = String()
-            msg.data = "score_adjust_10"
-            self.score_publisher.publish(msg)
+        # 发布得分消息
+        msg = String()
+        msg.data = f"score_adjust_{score}"
+        self.score_publisher.publish(msg)
 
 def main():
     app = QApplication(sys.argv)
