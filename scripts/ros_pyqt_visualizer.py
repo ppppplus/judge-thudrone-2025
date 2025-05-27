@@ -9,6 +9,9 @@ FilePath: /cursor/ros_pyqt_visualizer.py
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+
 import sys, os
 import rospy
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog
@@ -30,6 +33,9 @@ class RosVisualizer(QMainWindow):
         self.subscriber = rospy.Subscriber('/judge', String, self.callback)
         self.score_subscriber = rospy.Subscriber('/score', String, self.score_callback)
         self.team_subscriber = rospy.Subscriber('/team_name', String, self.team_callback)
+        
+        # 创建发布者
+        self.score_publisher = rospy.Publisher('/score_adjustment', String, queue_size=10)
         
         # 创建定时器用于更新GUI
         self.timer = QTimer()
@@ -137,6 +143,58 @@ class RosVisualizer(QMainWindow):
 
     def start_match_timer(self):
         """开始比赛计时"""
+        self.match_timer_running = True
+        self.match_timer_update.start(1000)  # 每秒更新一次
+        self.ui.timerStartButton.setEnabled(False)
+        self.ui.timerStopButton.setEnabled(True)
+
+    def stop_match_timer(self):
+        """停止比赛计时"""
+        self.match_timer_running = False
+        self.match_timer_update.stop()
+        self.ui.timerStartButton.setEnabled(True)
+        self.ui.timerStopButton.setEnabled(False)
+        rospy.loginfo(f"比赛结束，用时：{self.match_timer.toString('mm:ss')}")
+
+    def update_match_timer(self):
+        """更新比赛计时器显示"""
+        if self.match_timer_running:
+            self.match_timer = self.match_timer.addSecs(1)
+            self.ui.timerDisplay.setText(self.match_timer.toString("mm:ss"))
+
+    def handle_takeoff(self):
+        """处理起飞按钮点击"""
+        if not self.takeoff_done:
+            self.takeoff_done = True
+            self.ui.takeoffButton.setEnabled(False)
+            self.ui.takeoffButton.setStyleSheet("background-color: #27ae60; color: white;")
+            # 发布得分消息
+            msg = String()
+            msg.data = "takeoff"
+            self.score_publisher.publish(msg)
+
+    def handle_landing(self):
+        """处理降落按钮点击"""
+        if not self.landing_done:
+            self.landing_done = True
+            self.ui.landingButton.setEnabled(False)
+            self.ui.landingButton.setStyleSheet("background-color: #27ae60; color: white;")
+            # 发布得分消息
+            msg = String()
+            msg.data = "landing"
+            self.score_publisher.publish(msg)
+
+    def handle_score_adjustment(self):
+        """处理分数调整按钮点击"""
+        button = self.sender()
+        if button and hasattr(button, 'property'):
+            score_change = button.property('score')
+            score_type = button.property('type')
+            
+            # 发布分数变更消息
+            msg = String()
+            msg.data = f"score_adjust_{score_change}"
+            self.score_publisher.publish(msg)
 
 def main():
     app = QApplication(sys.argv)
