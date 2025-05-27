@@ -144,10 +144,13 @@ class RosVisualizer(QMainWindow):
 
     def update_gui(self):
         """更新GUI显示"""
-        formatted_answer = self.format_answer(self.received_data)
-        self.ui.playerAnswer.setHtml(formatted_answer)
+        # 更新分数和队伍名称显示
         self.ui.scoreDisplay.setText(self.current_score)
-        self.ui.teamDisplay.setText(self.team_name)  # 更新队伍名称显示
+        self.ui.teamDisplay.setText(self.team_name)
+        
+        # 更新计时器显示（如果正在运行）
+        if self.match_timer_running:
+            self.ui.timerDisplay.setText(self.match_timer.toString("mm:ss"))
         
     def closeEvent(self, event):
         """程序关闭时的处理"""
