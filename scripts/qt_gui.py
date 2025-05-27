@@ -17,7 +17,6 @@ class Ui_MainWindow(object):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1920, 1080)  # 设置初始窗口大小为1920x1080
         MainWindow.setMinimumSize(1000, 800)  # 保持最小尺寸限制
-        # 移除最大尺寸限制，允许全屏
         
         # 设置窗口样式
         MainWindow.setStyleSheet("""
@@ -27,6 +26,24 @@ class Ui_MainWindow(object):
             QWidget {
                 font-family: 'Microsoft YaHei UI', 'Segoe UI', 'PingFang SC', sans-serif;
             }
+            QPushButton {
+                font-size: 24px;
+                padding: 10px;
+                border-radius: 5px;
+                border: 1px solid #dcdde1;
+                background-color: #f5f6fa;
+            }
+            QPushButton:hover {
+                background-color: #dcdde1;
+            }
+            QPushButton:pressed {
+                background-color: #718093;
+                color: white;
+            }
+            QPushButton:disabled {
+                background-color: #718093;
+                color: white;
+            }
         """)
         
         self.centralwidget = QtWidgets.QWidget(MainWindow)
@@ -34,8 +51,8 @@ class Ui_MainWindow(object):
         
         # 创建主布局
         self.mainLayout = QtWidgets.QVBoxLayout(self.centralwidget)
-        self.mainLayout.setSpacing(10)  # 增加组件间距
-        self.mainLayout.setContentsMargins(20, 20, 20, 20)  # 增加边距
+        self.mainLayout.setSpacing(10)
+        self.mainLayout.setContentsMargins(20, 20, 20, 20)
         
         # 创建顶部信息卡片
         self.infoCard = QtWidgets.QWidget()
@@ -47,13 +64,13 @@ class Ui_MainWindow(object):
             }
         """)
         self.infoLayout = QtWidgets.QHBoxLayout(self.infoCard)
-        self.infoLayout.setContentsMargins(30, 40, 30, 40)
+        self.infoLayout.setContentsMargins(30, 20, 30, 20)
         
-        # 直接在infoLayout中添加标签
+        # 队伍信息部分
         self.teamLabel = QtWidgets.QLabel("队伍名称：")
         self.teamLabel.setStyleSheet("""
             color: #7f8c8d;
-            font-size: 72px;
+            font-size: 48px;
             font-weight: normal;
         """)
         self.infoLayout.addWidget(self.teamLabel)
@@ -61,17 +78,45 @@ class Ui_MainWindow(object):
         self.teamDisplay = QtWidgets.QLabel("Glgg说得都队")
         self.teamDisplay.setStyleSheet("""
             color: #2c3e50;
-            font-size: 72px;
+            font-size: 48px;
             font-weight: bold;
         """)
         self.infoLayout.addWidget(self.teamDisplay)
         
+        # 添加计时器部分
+        self.timerLabel = QtWidgets.QLabel("用时：")
+        self.timerLabel.setStyleSheet("""
+            color: #7f8c8d;
+            font-size: 48px;
+            font-weight: normal;
+        """)
+        self.infoLayout.addWidget(self.timerLabel)
+        
+        self.timerDisplay = QtWidgets.QLabel("00:00")
+        self.timerDisplay.setStyleSheet("""
+            color: #2c3e50;
+            font-size: 48px;
+            font-weight: bold;
+        """)
+        self.infoLayout.addWidget(self.timerDisplay)
+        
+        # 添加计时控制按钮
+        self.timerStartButton = QtWidgets.QPushButton("开始计时")
+        self.timerStartButton.setFixedWidth(150)
+        self.infoLayout.addWidget(self.timerStartButton)
+        
+        self.timerStopButton = QtWidgets.QPushButton("停止计时")
+        self.timerStopButton.setFixedWidth(150)
+        self.timerStopButton.setEnabled(False)
+        self.infoLayout.addWidget(self.timerStopButton)
+        
         self.infoLayout.addStretch()
         
+        # 分数显示
         self.scoreLabel = QtWidgets.QLabel("当前得分：")
         self.scoreLabel.setStyleSheet("""
             color: #7f8c8d;
-            font-size: 72px;
+            font-size: 48px;
             font-weight: normal;
         """)
         self.infoLayout.addWidget(self.scoreLabel)
@@ -79,21 +124,21 @@ class Ui_MainWindow(object):
         self.scoreDisplay = QtWidgets.QLabel("0")
         self.scoreDisplay.setStyleSheet("""
             color: #e74c3c;
-            font-size: 100px;
+            font-size: 72px;
             font-weight: bold;
         """)
         self.infoLayout.addWidget(self.scoreDisplay)
         
-        # 将信息添加到顶部卡片
+        # 将信息卡片添加到主布局
         self.mainLayout.addWidget(self.infoCard)
         
         # 创建内容区域
         self.contentArea = QtWidgets.QHBoxLayout()
-        self.contentArea.setSpacing(5)
+        self.contentArea.setSpacing(20)
         
-        # 左侧答案区域
-        self.answersCard = QtWidgets.QWidget()
-        self.answersCard.setStyleSheet("""
+        # 左侧结果显示区域
+        self.resultsCard = QtWidgets.QWidget()
+        self.resultsCard.setStyleSheet("""
             QWidget {
                 background-color: white;
                 border-radius: 15px;
@@ -103,74 +148,49 @@ class Ui_MainWindow(object):
                 color: #2c3e50;
                 font-size: 36px;
                 font-weight: bold;
-                padding: 5px 0;
-            }
-            QTextBrowser {
-                border: 2px solid #e0e0e0;
-                border-radius: 12px;
-                padding: 20px;
-                font-size: 72px;
-                line-height: 1.0;
+                padding: 5px;
+                border: 1px solid #e0e0e0;
                 background-color: #f8f9fa;
-                color: #2c3e50;
-                min-height: 120px;
-                max-height: 160px;
+                border-radius: 5px;
             }
         """)
         
-        self.answersLayout = QtWidgets.QVBoxLayout(self.answersCard)
-        self.answersLayout.setContentsMargins(20, 10, 20, 10)
-        self.answersLayout.setSpacing(5)
+        self.resultsLayout = QtWidgets.QVBoxLayout(self.resultsCard)
+        self.resultsLayout.setContentsMargins(20, 20, 20, 20)
         
-        # 正确答案部分
-        self.correctLabel = QtWidgets.QLabel("正确答案")
-        self.correctLabel.setFixedWidth(400)  # 固定标签宽度
-        self.correctLabel.setMinimumHeight(40)  # 设置最小高度
-        self.correctLabel.setStyleSheet("""
-            color: #2c3e50;
-            font-size: 56px;
-            font-weight: bold;
-            padding: 5px 10px;
-            background-color: #f8f9fa;
-            border-radius: 10px;
-            margin: 5px;
-        """)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
-        self.correctLabel.setSizePolicy(sizePolicy)
-        self.answersLayout.addWidget(self.correctLabel)
+        # 创建5x5网格布局
+        self.gridLayout = QtWidgets.QGridLayout()
+        self.gridLayout.setSpacing(10)
         
-        self.correctAnswer = QtWidgets.QTextBrowser()
-        self.correctAnswer.setMinimumHeight(160)
-        self.correctAnswer.setMaximumHeight(240)
-        self.answersLayout.addWidget(self.correctAnswer)
+        # 创建网格中的标签
+        self.gridLabels = []
+        for i in range(5):
+            row = []
+            for j in range(5):
+                label = QtWidgets.QLabel("")
+                label.setAlignment(QtCore.Qt.AlignCenter)
+                label.setMinimumSize(120, 120)
+                self.gridLayout.addWidget(label, i, j)
+                row.append(label)
+            self.gridLabels.append(row)
         
-        # 添加分隔线
-        self.line = QtWidgets.QFrame()
-        self.line.setFrameShape(QtWidgets.QFrame.HLine)
-        self.line.setStyleSheet("background-color: #e0e0e0; margin: 5px 0;")
-        self.answersLayout.addWidget(self.line)
+        # 设置特定位置的标签
+        positions = {
+            (0, 2): "1号", (4, 2): "2号", (1, 1): "3号",
+            (3, 3): "4号", (2, 0): "5号", (2, 4): "6号",
+            (3, 1): "7号", (1, 3): "8号", (2, 2): "9号"
+        }
         
-        # 选手答案部分
-        self.playerLabel = QtWidgets.QLabel("选手答案")
-        self.playerLabel.setFixedWidth(400)  # 固定标签宽度
-        self.playerLabel.setMinimumHeight(40)  # 设置最小高度
-        self.playerLabel.setStyleSheet("""
-            color: #2c3e50;
-            font-size: 56px;
-            font-weight: bold;
-            padding: 5px 10px;
-            background-color: #f8f9fa;
-            border-radius: 10px;
-            margin: 5px;
-        """)
-        # sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
-        self.playerLabel.setSizePolicy(sizePolicy)
-        self.answersLayout.addWidget(self.playerLabel)
+        for pos, text in positions.items():
+            self.gridLabels[pos[0]][pos[1]].setText(text)
         
-        self.playerAnswer = QtWidgets.QTextBrowser()
-        self.playerAnswer.setMinimumHeight(160)
-        self.playerAnswer.setMaximumHeight(240)
-        self.answersLayout.addWidget(self.playerAnswer)
+        # 添加起飞和降落按钮
+        self.takeoffButton = QtWidgets.QPushButton("起飞成功")
+        self.landingButton = QtWidgets.QPushButton("降落成功")
+        self.gridLayout.addWidget(self.takeoffButton, 0, 0)
+        self.gridLayout.addWidget(self.landingButton, 4, 4)
+        
+        self.resultsLayout.addLayout(self.gridLayout)
         
         # 右侧视频区域
         self.videoCard = QtWidgets.QWidget()
@@ -182,7 +202,7 @@ class Ui_MainWindow(object):
             }
             QLabel {
                 color: #2c3e50;
-                font-size: 56px;
+                font-size: 36px;
                 font-weight: bold;
                 padding: 10px 0;
             }
@@ -207,31 +227,13 @@ class Ui_MainWindow(object):
         self.videoLayout.addWidget(self.videoDisplay)
         
         # 将左右两部分添加到内容区域
-        self.contentArea.addWidget(self.answersCard, 1)  # 1是拉伸因子
-        self.contentArea.addWidget(self.videoCard, 2)    # 2是拉伸因子，使视频区域更宽
+        self.contentArea.addWidget(self.resultsCard, 1)
+        self.contentArea.addWidget(self.videoCard, 2)
         
         # 将内容区域添加到主布局
         self.mainLayout.addLayout(self.contentArea)
         
         MainWindow.setCentralWidget(self.centralwidget)
-        
-        # 创建菜单栏
-        self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1000, 22))
-        self.menubar.setStyleSheet("""
-            QMenuBar {
-                background-color: white;
-                border-bottom: 1px solid #e0e0e0;
-            }
-            QMenuBar::item {
-                padding: 5px 10px;
-                color: #2c3e50;
-            }
-            QMenuBar::item:selected {
-                background-color: #f5f6fa;
-            }
-        """)
-        MainWindow.setMenuBar(self.menubar)
         
         # 创建状态栏
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
