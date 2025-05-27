@@ -192,6 +192,32 @@ class Ui_MainWindow(object):
         
         self.resultsLayout.addLayout(self.gridLayout)
         
+        # 添加识别结果显示区域
+        self.resultLabel = QtWidgets.QLabel("选手识别结果：")
+        self.resultLabel.setStyleSheet("""
+            color: #7f8c8d;
+            font-size: 36px;
+            font-weight: normal;
+            padding: 10px 0;
+            border: none;
+            background: none;
+        """)
+        self.resultsLayout.addWidget(self.resultLabel)
+        
+        self.resultDisplay = QtWidgets.QLabel("")
+        self.resultDisplay.setStyleSheet("""
+            color: #2c3e50;
+            font-size: 36px;
+            font-weight: bold;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+            min-height: 60px;
+        """)
+        self.resultDisplay.setAlignment(QtCore.Qt.AlignCenter)
+        self.resultsLayout.addWidget(self.resultDisplay)
+        
         # 右侧视频区域
         self.videoCard = QtWidgets.QWidget()
         self.videoCard.setStyleSheet("""
