@@ -131,6 +131,17 @@ class RosVisualizer(QMainWindow):
         self.team_name = data.data
         self.ui.teamDisplay.setText(self.team_name)
 
+    def format_answer(self, answer):
+        """格式化识别结果显示"""
+        if not answer:
+            return ""
+        try:
+            position = int(answer[0])  # 位置编号
+            result_type = answer[1]    # 结果类型
+            return f"位置 {position}: {result_type}类"
+        except:
+            return answer
+
     def update_gui(self):
         """更新GUI显示"""
         formatted_answer = self.format_answer(self.received_data)
