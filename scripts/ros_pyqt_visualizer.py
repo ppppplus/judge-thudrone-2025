@@ -37,7 +37,7 @@ class RosVisualizer(QMainWindow):
         self.team_subscriber = rospy.Subscriber('/team_name', String, self.team_callback)
         
         # 创建发布者
-        self.score_publisher = rospy.Publisher('/score_adjustment', String, queue_size=10)
+        self.score_publisher = rospy.Publisher('/judge', String, queue_size=10)
         
         # 创建定时器用于更新GUI
         self.timer = QTimer()
