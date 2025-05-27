@@ -73,8 +73,8 @@ class RosVisualizer(QMainWindow):
         # 添加圈1和圈2按钮
         self.circle1_button = QPushButton("圈1")
         self.circle2_button = QPushButton("圈2")
-        self.ui.gridLayout.addWidget(self.circle1_button, 2, 3)
-        self.ui.gridLayout.addWidget(self.circle2_button, 4, 3)
+        self.ui.gridLayout.addWidget(self.circle1_button, 1, 2)  # 2行3列
+        self.ui.gridLayout.addWidget(self.circle2_button, 3, 2)  # 4行3列
         
         # 连接圈按钮的点击事件
         self.circle1_button.clicked.connect(lambda: self.handle_circle_click(1))
