@@ -15,9 +15,9 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         # 设置窗口基本属性
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1000, 800)  # 增加初始窗口大小
-        MainWindow.setMinimumSize(1000, 800)
-        MainWindow.setMaximumSize(1920, 1080)
+        MainWindow.resize(1920, 1080)  # 设置初始窗口大小为1920x1080
+        MainWindow.setMinimumSize(1000, 800)  # 保持最小尺寸限制
+        # 移除最大尺寸限制，允许全屏
         
         # 设置窗口样式
         MainWindow.setStyleSheet("""
@@ -25,7 +25,7 @@ class Ui_MainWindow(object):
                 background-color: #f5f6fa;
             }
             QWidget {
-                font-family: 'Microsoft YaHei', 'Segoe UI', sans-serif;
+                font-family: 'Microsoft YaHei UI', 'Segoe UI', 'PingFang SC', sans-serif;
             }
         """)
         
@@ -67,8 +67,9 @@ class Ui_MainWindow(object):
         self.teamDisplay.setStyleSheet("""
             QLabel {
                 color: #2c3e50;
-                font-size: 24px;
+                font-size: 32px;
                 font-weight: bold;
+                font-family: 'Microsoft YaHei UI', 'Segoe UI', 'PingFang SC', sans-serif;
             }
         """)
         self.teamLayout.addWidget(self.teamDisplay)
@@ -91,8 +92,9 @@ class Ui_MainWindow(object):
         self.scoreDisplay.setStyleSheet("""
             QLabel {
                 color: #e74c3c;
-                font-size: 32px;
+                font-size: 48px;
                 font-weight: bold;
+                font-family: 'Microsoft YaHei UI', 'Segoe UI', 'PingFang SC', sans-serif;
             }
         """)
         self.scoreLayout.addWidget(self.scoreDisplay)
@@ -119,17 +121,20 @@ class Ui_MainWindow(object):
             }
             QLabel {
                 color: #2c3e50;
-                font-size: 18px;
+                font-size: 24px;
                 font-weight: bold;
-                padding: 10px 0;
+                padding: 15px 0;
+                font-family: 'Microsoft YaHei UI', 'Segoe UI', 'PingFang SC', sans-serif;
             }
             QTextBrowser {
-                border: 1px solid #e0e0e0;
-                border-radius: 8px;
-                padding: 10px;
-                font-size: 16px;
+                border: 2px solid #e0e0e0;
+                border-radius: 12px;
+                padding: 15px;
+                font-size: 20px;
+                line-height: 1.5;
                 background-color: #f8f9fa;
                 color: #2c3e50;
+                font-family: 'Microsoft YaHei UI', 'Segoe UI', 'PingFang SC', sans-serif;
             }
         """)
         
@@ -141,7 +146,8 @@ class Ui_MainWindow(object):
         self.answersLayout.addWidget(self.correctLabel)
         
         self.correctAnswer = QtWidgets.QTextBrowser()
-        self.correctAnswer.setMaximumHeight(100)
+        self.correctAnswer.setMinimumHeight(150)
+        self.correctAnswer.setMaximumHeight(200)
         self.answersLayout.addWidget(self.correctAnswer)
         
         # 添加分隔线
@@ -155,7 +161,8 @@ class Ui_MainWindow(object):
         self.answersLayout.addWidget(self.playerLabel)
         
         self.playerAnswer = QtWidgets.QTextBrowser()
-        self.playerAnswer.setMaximumHeight(100)
+        self.playerAnswer.setMinimumHeight(150)
+        self.playerAnswer.setMaximumHeight(200)
         self.answersLayout.addWidget(self.playerAnswer)
         
         # 右侧视频区域

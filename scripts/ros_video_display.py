@@ -12,13 +12,14 @@ class ROSVideoDisplay(QLabel):
         self.bridge = CvBridge()
         
         # 设置显示区域大小和样式
-        self.setMinimumSize(640, 480)
-        self.setMaximumSize(640, 480)
+        self.setMinimumSize(800, 600)
+        self.setMaximumSize(1280, 960)
         self.setStyleSheet("""
             QLabel {
-                border: 1px solid #ccc;
-                border-radius: 5px;
-                background-color: #f0f0f0;
+                border: 2px solid #2c3e50;
+                border-radius: 10px;
+                background-color: #000000;
+                padding: 5px;
             }
         """)
         self.setScaledContents(True)  # 允许图像缩放以适应标签大小
