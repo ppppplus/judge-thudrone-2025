@@ -1,16 +1,16 @@
 # Drone Competition Judging System
 
-A judging system for drone competitions, designed to evaluate teams' performance in drone recognition tasks. The system provides real-time video display, score calculation, and result verification capabilities.
+This is a judging system for drone competitions, used to evaluate team performance in drone recognition tasks. The system provides real-time video display, score calculation, and result verification functions.
 
 ## Features
 
 - Real-time drone video stream display
 - Automatic scoring system
 - Modern graphical interface
-- Support for multi-stage competition scoring
+- Multi-stage competition scoring support
 - Real-time team information and score display
 
-## Usage Instructions
+## Instructions
 
 ### Step 1: Connect Device
 Connect the drone and start the tello_state node
@@ -27,24 +27,30 @@ Run `score.py` in the `scripts` directory and send messages of type `std_msgs/St
 
 Note:
 - Takeoff and landing are scored manually
-- The judging system only accepts recognition results once
-- Please send results after all recognition is complete
-- Results will be printed in the command line
-- If the system doesn't receive results, judges can manually assign scores based on printed results
+- The judging system only accepts one recognition result
+- Please send results after all recognitions are complete
+- The system will print results in the command line
+- If the system does not receive results, judges can manually assign scores based on printed results
 
 ## Scoring Rules
 
-### Stage 1
-- Takeoff from starting area: 10 points
-- Ball recognition: 10 points each (3 balls, in order according to rules)
-- Landing: 10 points
-- Example: If answer is "RGB" and received "RBG", score is 10 points
+### Basic Movement Scores
+- Drone takeoff: 5 points
+- Drone landing: 5 points
 
-### Stage 2
-- Takeoff from starting area: 10 points
-- Ball recognition: 15 points each (2 balls, Team A placement area - Team B placement area order)
-- Landing: 10 points
-- Example: If answer is "RG" and received "RB", score is 15 points
+### Ring Passing Task
+- Passing through the ring specified by the opposing team: 10 points
+- Double ring positions and heights are specified by teaching assistants
+
+### Image Recognition Task (Total 20 points)
+Recognize images at different positions within the time limit:
+- Type A images: 3 points each
+  * 3 sets of images + positions specified by the opposing team
+  * Free choice of horizontal or vertical orientation
+- Type B images: 1 point each
+  * 5 sets of images at fixed positions specified by teaching assistants
+- Type C images: 6 points each
+  * Images at rotating positions specified by teaching assistants
 
 ## System Requirements
 
