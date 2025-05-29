@@ -233,48 +233,6 @@ class Ui_MainWindow(object):
         # 将内容区域添加到主布局
         self.mainLayout.addLayout(self.contentArea)
         
-        # 添加识别结果显示区域
-        self.resultCard = QtWidgets.QWidget()
-        self.resultCard.setStyleSheet("""
-            QWidget {
-                background-color: white;
-                border-radius: 15px;
-                border: 1px solid #e0e0e0;
-                margin-top: 10px;
-            }
-        """)
-        self.resultLayout = QtWidgets.QVBoxLayout(self.resultCard)
-        self.resultLayout.setContentsMargins(20, 20, 20, 20)
-        
-        self.resultLabel = QtWidgets.QLabel("选手识别结果")
-        self.resultLabel.setStyleSheet("""
-            color: #7f8c8d;
-            font-size: 36px;
-            font-weight: normal;
-            padding: 10px 0;
-            border: none;
-            background: none;
-        """)
-        self.resultLayout.addWidget(self.resultLabel)
-        
-        self.resultDisplay = QtWidgets.QLabel("")
-        self.resultDisplay.setStyleSheet("""
-            color: #2c3e50;
-            font-size: 36px;
-            font-weight: bold;
-            padding: 20px;
-            border: 1px solid #e0e0e0;
-            border-radius: 5px;
-            background-color: #f8f9fa;
-            min-height: 80px;
-        """)
-        self.resultDisplay.setAlignment(QtCore.Qt.AlignCenter)
-        self.resultDisplay.setWordWrap(True)  # 允许文本换行
-        self.resultLayout.addWidget(self.resultDisplay)
-        
-        # 将结果显示区域添加到主布局
-        self.mainLayout.addWidget(self.resultCard)
-        
         MainWindow.setCentralWidget(self.centralwidget)
         
         # 创建状态栏
