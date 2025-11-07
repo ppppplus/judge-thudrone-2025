@@ -1,0 +1,7 @@
+teams:
+  - name: Alpha
+    ros_master: http://192.168.50.197:11311
+  - name: Beta
+    ros_master: http://192.168.50.197:11312
+  - name: Gamma
+    ros_master: http://192.168.50.197:11313

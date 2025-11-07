@@ -11,7 +11,7 @@ python3 scripts/ros_pyqt_visualizer.py &
 visualizer_pid=$!
 
 # 启动评分系统
-python3 scripts/score.py
+# python3 scripts/score.py
 
 # 清理进程
 kill $visualizer_pid 2>/dev/null

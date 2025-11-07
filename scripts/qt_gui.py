@@ -9,7 +9,9 @@ FilePath: /cursor/qt_gui.py
 # -*- coding: utf-8 -*-
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from ros_video_display import ROSVideoDisplay
+from PyQt5.QtCore import Qt
+
+# from ros_video_display import ROSVideoDisplay
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -53,7 +55,6 @@ class Ui_MainWindow(object):
         self.mainLayout = QtWidgets.QVBoxLayout(self.centralwidget)
         self.mainLayout.setSpacing(10)
         self.mainLayout.setContentsMargins(20, 20, 20, 20)
-        
         # 创建顶部信息卡片
         self.infoCard = QtWidgets.QWidget()
         self.infoCard.setStyleSheet("""
@@ -63,74 +64,215 @@ class Ui_MainWindow(object):
                 border: 1px solid #e0e0e0;
             }
         """)
-        self.infoLayout = QtWidgets.QHBoxLayout(self.infoCard)
+
+        # 使用 GridLayout，左边按钮跨两行，右边三列竖排
+        self.infoLayout = QtWidgets.QGridLayout(self.infoCard)
         self.infoLayout.setContentsMargins(30, 20, 30, 20)
-        
-        # 队伍信息部分
-        self.teamLabel = QtWidgets.QLabel("队伍名称")
-        self.teamLabel.setStyleSheet("""
-            color: #7f8c8d;
-            font-size: 48px;
-            font-weight: normal;
-        """)
-        self.infoLayout.addWidget(self.teamLabel)
-        
-        self.teamDisplay = QtWidgets.QLabel("Glgg说得都队")
-        self.teamDisplay.setStyleSheet("""
-            color: #2c3e50;
-            font-size: 48px;
-            font-weight: bold;
-        """)
-        self.infoLayout.addWidget(self.teamDisplay)
-        
-        # 添加计时器部分
-        self.timerLabel = QtWidgets.QLabel("用时")
-        self.timerLabel.setStyleSheet("""
-            color: #7f8c8d;
-            font-size: 48px;
-            font-weight: normal;
-        """)
-        self.infoLayout.addWidget(self.timerLabel)
-        
-        self.timerDisplay = QtWidgets.QLabel("00:00.000")
-        self.timerDisplay.setStyleSheet("""
-            color: #2c3e50;
-            font-size: 48px;
-            font-weight: bold;
-        """)
-        self.infoLayout.addWidget(self.timerDisplay)
-        
-        # 添加计时控制按钮
+        self.infoLayout.setHorizontalSpacing(30)
+        self.infoLayout.setVerticalSpacing(8)
+
+        # ===== 左侧：按钮列（跨两行） =====
+        self.buttonLayout = QtWidgets.QVBoxLayout()
+        self.buttonLayout.setContentsMargins(0, 0, 0, 0)
+        self.buttonLayout.setSpacing(10)
+
+        # “开始计时”按钮
         self.timerStartButton = QtWidgets.QPushButton("开始计时")
         self.timerStartButton.setFixedWidth(150)
-        self.infoLayout.addWidget(self.timerStartButton)
-        
+        self.timerStartButton.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        self.buttonLayout.addWidget(self.timerStartButton, stretch=1)
+
+        # “停止计时”按钮
         self.timerStopButton = QtWidgets.QPushButton("停止计时")
         self.timerStopButton.setFixedWidth(150)
         self.timerStopButton.setEnabled(False)
-        self.infoLayout.addWidget(self.timerStopButton)
-        
-        self.infoLayout.addStretch()
-        
-        # 分数显示
+        self.timerStopButton.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        self.buttonLayout.addWidget(self.timerStopButton, stretch=1)
+
+        # “重置”按钮
+        self.refreshButton = QtWidgets.QPushButton("重置")
+        self.refreshButton.setFixedWidth(150)
+        self.refreshButton.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        self.buttonLayout.addWidget(self.refreshButton, stretch=1)
+
+        # 把整个列放入 GridLayout，占两行，高度随右侧变化
+        self.infoLayout.addLayout(self.buttonLayout, 0, 0, 2, 1)
+
+        # ===== 中间一：队伍名称 =====
+        self.teamLayout = QtWidgets.QVBoxLayout()
+        self.teamLayout.setSpacing(5)
+        self.teamLayout.setContentsMargins(0, 0, 0, 0)
+
+        # 上半部分：标签
+        self.teamLabel = QtWidgets.QLabel("队伍名称")
+        self.teamLabel.setAlignment(Qt.AlignCenter)
+        self.teamLabel.setStyleSheet("color:#7f8c8d; font-size:36px;")
+        # 允许随父布局垂直拉伸
+        self.teamLabel.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        self.teamLayout.addWidget(self.teamLabel, stretch=1)
+
+        # 下半部分：下拉框
+        self.teamComboBox = QtWidgets.QComboBox()
+        self.teamComboBox.setStyleSheet("font-size:36px; font-weight:bold; color:#2c3e50;")
+        # 移除固定高度，允许伸缩
+        self.teamComboBox.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        self.teamLayout.addWidget(self.teamComboBox, stretch=1)
+
+        # ===== 中间二：用时 =====
+        self.timeLayout = QtWidgets.QVBoxLayout()
+        self.timeLayout.setSpacing(5)
+        self.timeLayout.setContentsMargins(0, 0, 0, 0)
+
+        self.timerLabel = QtWidgets.QLabel("用时")
+        self.timerLabel.setAlignment(Qt.AlignCenter)
+        self.timerLabel.setStyleSheet("color:#7f8c8d; font-size:36px;")
+        self.timerLabel.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        self.timeLayout.addWidget(self.timerLabel, stretch=1)
+
+        self.timerDisplay = QtWidgets.QLabel("00:00.000")
+        self.timerDisplay.setAlignment(Qt.AlignCenter)
+        self.timerDisplay.setStyleSheet("font-size:48px; font-weight:bold; color:#2c3e50;")
+        self.timerDisplay.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        self.timeLayout.addWidget(self.timerDisplay, stretch=1)
+
+        # ===== 右侧：得分 =====
+        self.scoreLayout = QtWidgets.QVBoxLayout()
+        self.scoreLayout.setSpacing(5)
+        self.scoreLayout.setContentsMargins(0, 0, 0, 0)
+
         self.scoreLabel = QtWidgets.QLabel("当前得分")
-        self.scoreLabel.setStyleSheet("""
-            color: #7f8c8d;
-            font-size: 48px;
-            font-weight: normal;
-        """)
-        self.infoLayout.addWidget(self.scoreLabel)
-        
-        self.scoreDisplay = QtWidgets.QLabel("00")
-        self.scoreDisplay.setStyleSheet("""
-            color: #e74c3c;
-            font-size: 72px;
-            font-weight: bold;
-        """)
-        self.infoLayout.addWidget(self.scoreDisplay)
-        
+        self.scoreLabel.setAlignment(Qt.AlignCenter)
+        self.scoreLabel.setStyleSheet("color:#7f8c8d; font-size:36px;")
+        self.scoreLabel.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        self.scoreLayout.addWidget(self.scoreLabel, stretch=1)
+
+        self.scoreDisplay = QtWidgets.QLabel("0")
+        self.scoreDisplay.setAlignment(Qt.AlignCenter)
+        self.scoreDisplay.setStyleSheet("font-size:72px; font-weight:bold; color:#e74c3c;")
+        self.scoreDisplay.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        self.scoreLayout.addWidget(self.scoreDisplay, stretch=1)
+
+        # ===== 把三列放到 GridLayout =====
+        self.infoLayout.addLayout(self.teamLayout, 0, 1, 2, 1)
+        self.infoLayout.addLayout(self.timeLayout, 0, 2, 2, 1)
+        self.infoLayout.addLayout(self.scoreLayout, 0, 3, 2, 1)
+
+        # ===== 保证行列对齐 =====
+        self.infoLayout.setColumnStretch(1, 1)
+        self.infoLayout.setColumnStretch(2, 1)
+        self.infoLayout.setColumnStretch(3, 1)
+        self.infoLayout.setRowStretch(0, 1)
+        self.infoLayout.setRowStretch(1, 2)
+
         # 将信息卡片添加到主布局
         self.mainLayout.addWidget(self.infoCard)
+
+        
+        # # 创建顶部信息卡片
+        # self.infoCard = QtWidgets.QWidget()
+        # self.infoCard.setStyleSheet("""
+        #     QWidget {
+        #         background-color: white;
+        #         border-radius: 15px;
+        #         border: 1px solid #e0e0e0;
+        #     }
+        # """)
+        # self.infoLayout = QtWidgets.QHBoxLayout(self.infoCard)
+        # self.infoLayout.setContentsMargins(30, 20, 30, 20)
+
+        # # ===== 创建按钮列（左侧竖排） =====
+        # self.buttonLayout = QtWidgets.QVBoxLayout()
+        # self.buttonLayout.setContentsMargins(0, 0, 0, 0)
+        # self.buttonLayout.setSpacing(10)
+
+        # self.timerStartButton = QtWidgets.QPushButton("开始计时")
+        # self.timerStartButton.setFixedWidth(150)
+        # self.buttonLayout.addWidget(self.timerStartButton)
+
+        # self.timerStopButton = QtWidgets.QPushButton("停止计时")
+        # self.timerStopButton.setFixedWidth(150)
+        # self.timerStopButton.setEnabled(False)
+        # self.buttonLayout.addWidget(self.timerStopButton)
+
+        # self.refreshButton = QtWidgets.QPushButton("重置")
+        # self.refreshButton.setFixedWidth(150)
+        # self.buttonLayout.addWidget(self.refreshButton)
+
+        # # 用 addLayout 而不是 addWidget
+        # self.infoLayout.addLayout(self.buttonLayout)
+        
+        # # 队伍信息部分
+        # self.teamLabel = QtWidgets.QLabel("队伍名称")
+        # self.teamLabel.setStyleSheet("""
+        #     color: #7f8c8d;
+        #     font-size: 36px;
+        #     font-weight: normal;
+        # """)
+        # self.infoLayout.addWidget(self.teamLabel)
+
+        # # 队伍下拉框（即展示用）
+        # self.teamComboBox = QtWidgets.QComboBox()
+        # self.teamComboBox.setStyleSheet("""
+        #     font-size: 36px;
+        #     color: #2c3e50;
+        #     font-weight: bold;
+        # """)
+        # self.teamComboBox.setFixedWidth(300)  # 可选：控制宽度
+        # self.infoLayout.addWidget(self.teamComboBox)
+
+        # # 添加刷新按钮
+        # # self.refreshButton = QtWidgets.QPushButton("重置")
+        # # self.refreshButton.setFixedWidth(180)
+        # # self.infoLayout.addWidget(self.refreshButton)
+        
+        # # 添加计时器部分
+        # self.timerLabel = QtWidgets.QLabel("用时")
+        # self.timerLabel.setStyleSheet("""
+        #     color: #7f8c8d;
+        #     font-size: 48px;
+        #     font-weight: normal;
+        # """)
+        # self.infoLayout.addWidget(self.timerLabel)
+        
+        # self.timerDisplay = QtWidgets.QLabel("00:00.000")
+        # self.timerDisplay.setStyleSheet("""
+        #     color: #2c3e50;
+        #     font-size: 48px;
+        #     font-weight: bold;
+        # """)
+        # self.infoLayout.addWidget(self.timerDisplay)
+        
+        # # 添加计时控制按钮
+        # # self.timerStartButton = QtWidgets.QPushButton("开始计时")
+        # # self.timerStartButton.setFixedWidth(150)
+        # # self.infoLayout.addWidget(self.timerStartButton)
+        
+        # # self.timerStopButton = QtWidgets.QPushButton("停止计时")
+        # # self.timerStopButton.setFixedWidth(150)
+        # # self.timerStopButton.setEnabled(False)
+        # # self.infoLayout.addWidget(self.timerStopButton)
+        
+        # # self.infoLayout.addStretch()
+        
+        # # 分数显示
+        # self.scoreLabel = QtWidgets.QLabel("当前得分")
+        # self.scoreLabel.setStyleSheet("""
+        #     color: #7f8c8d;
+        #     font-size: 48px;
+        #     font-weight: normal;
+        # """)
+        # self.infoLayout.addWidget(self.scoreLabel)
+        
+        # self.scoreDisplay = QtWidgets.QLabel("00")
+        # self.scoreDisplay.setStyleSheet("""
+        #     color: #e74c3c;
+        #     font-size: 72px;
+        #     font-weight: bold;
+        # """)
+        # self.infoLayout.addWidget(self.scoreDisplay)
+        
+        # # 将信息卡片添加到主布局
+        # self.mainLayout.addWidget(self.infoCard)
         
         # 创建内容区域
         self.contentArea = QtWidgets.QHBoxLayout()
@@ -214,7 +356,8 @@ class Ui_MainWindow(object):
         self.videoLabel = QtWidgets.QLabel("实时视频流")
         self.videoLayout.addWidget(self.videoLabel)
         
-        self.videoDisplay = ROSVideoDisplay()
+        # 替换 self.videoDisplay = ROSVideoDisplay()
+        self.videoDisplay = QtWidgets.QLabel()
         self.videoDisplay.setMinimumSize(800, 600)
         self.videoDisplay.setStyleSheet("""
             QLabel {
@@ -224,6 +367,8 @@ class Ui_MainWindow(object):
                 background-color: #000000;
             }
         """)
+        self.videoDisplay.setAlignment(QtCore.Qt.AlignCenter)
+        self.videoDisplay.setText("等待视频流...")
         self.videoLayout.addWidget(self.videoDisplay)
         
         # 将左右两部分添加到内容区域
