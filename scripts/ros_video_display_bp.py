@@ -26,7 +26,7 @@ class ROSVideoDisplay(QLabel):
         
         # 订阅ROS图像话题
         self.image_sub = rospy.Subscriber(
-            "/image",
+            "/image_raw/compressed",
             Image,
             self.image_callback
         )

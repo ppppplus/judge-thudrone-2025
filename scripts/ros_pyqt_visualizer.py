@@ -11,47 +11,49 @@ from PyQt5.QtCore import QTimer, QTime, Qt
 from std_msgs.msg import String
 from qt_gui import Ui_MainWindow
 import yaml
-from sensor_msgs.msg import Image
+from sensor_msgs.msg import Image, CompressedImage
 import cv2
 from cv_bridge import CvBridge
 from PyQt5.QtGui import QImage, QPixmap
-
-
+import argparse
+import rospy
+import numpy as np
 # =================== ROS Worker 子进程 =================== #
-def ros_worker(master_uri, queue):
+def ros_worker(master_uri, local_ip, queue):
     """子进程：连接指定 ROS_MASTER_URI，转发消息到队列"""
-    import rospy
-    from std_msgs.msg import String
-    from sensor_msgs.msg import Image
-    from cv_bridge import CvBridge
-    import cv2
-
     os.environ["ROS_MASTER_URI"] = master_uri
+    os.environ["ROS_IP"] = local_ip
     rospy.init_node("qt_visualizer_worker", anonymous=True, disable_signals=True)
-
+    print(f"[INFO] ROS_MASTER_URI={master_uri}, ROS_IP={local_ip}")
     def judge_cb(msg):
         queue.put(("judge", msg.data))
 
     bridge = CvBridge()
 
-    def image_cb(msg):
+    def image_cb(data):
         try:
-            cv_image = bridge.imgmsg_to_cv2(msg, "bgr8")
+            # print(msg)
+            # cv_image = bridge.compressed_imgmsg_to_cv2(msg, "bgr8")
+            # cv_image = cv2.cvtColor(cv_image, cv2.COLOR_BGR2RGB)
+            # rospy.loginfo("cv2 image:", cv_image.shape)
+            np_arr = np.fromstring(data.data, np.uint8)
+            cv_image = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
             cv_image = cv2.cvtColor(cv_image, cv2.COLOR_BGR2RGB)
             queue.put(("image", cv_image))
         except Exception as e:
             rospy.logerr(f"图像转换失败: {e}")
 
     rospy.Subscriber("/judge", String, judge_cb)
-    rospy.Subscriber("/image", Image, image_cb)
+    rospy.Subscriber("/image_raw/compressed", CompressedImage, image_cb)
 
     rospy.spin()
 
 
 # =================== 主窗口 GUI =================== #
 class RosVisualizer(QMainWindow):
-    def __init__(self):
+    def __init__(self, local_ip):
         super(RosVisualizer, self).__init__()
+        self.local_ip = local_ip
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
@@ -117,16 +119,16 @@ class RosVisualizer(QMainWindow):
     def update_team_name(self, name):
         index = self.ui.teamComboBox.currentIndex()
         new_master = self.ui.teamComboBox.itemData(index)
-        print(f"[INFO] 切换到队伍 {name}, ROS_MASTER_URI={new_master}")
+        
 
         # 停掉旧的 worker
         if self.ros_proc:
             self.ros_proc.terminate()
             self.ros_proc = None
-
+        print(f"start new worker of {name}")
         # 启动新的 worker
         q = multiprocessing.Queue()
-        p = multiprocessing.Process(target=ros_worker, args=(new_master, q))
+        p = multiprocessing.Process(target=ros_worker, args=(new_master, self.local_ip, q))
         p.start()
         self.ros_proc = p
         self.ros_queue = q
@@ -346,13 +348,16 @@ class RosVisualizer(QMainWindow):
 
 
 # =================== 主入口 =================== #
-def main():
+def main(local_ip):
     multiprocessing.set_start_method("spawn")
     app = QApplication(sys.argv)
-    window = RosVisualizer()
+    window = RosVisualizer(local_ip)
     window.show()
     sys.exit(app.exec_())
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(description='judge')
+    parser.add_argument('--local_ip', type=str, help='local ip')
+    args = parser.parse_args()
+    main(args.local_ip)
